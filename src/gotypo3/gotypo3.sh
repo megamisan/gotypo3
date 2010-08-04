@@ -27,7 +27,7 @@ set -o errexit
 
 if [[ -f /var/log/gotypo.log ]]
 then
-	rm /var/log/gotypo.log
+    rm /var/log/gotypo.log
 fi
 exec 2>> /var/log/gotypo.log
 
@@ -35,59 +35,59 @@ exec 2>> /var/log/gotypo.log
 # functions declaration
 #===============================================================================
 
-# function : 	download_content
+# function :     download_content
 # description : downloads the content a file
 # parameter 1 : is authentication needed ?
-# parameter 2 :	url of file to download
-# parameter 3 :	user for authentication
-# parameter 4 :	password for authentication
+# parameter 2 :    url of file to download
+# parameter 3 :    user for authentication
+# parameter 4 :    password for authentication
 download_content ()
 {
-	local if_auth="$1"
-	local file_url="$2"
-	local auth_usr="$3"
-	local auth_pwd="$4"
+    local if_auth="$1"
+    local file_url="$2"
+    local auth_usr="$3"
+    local auth_pwd="$4"
 
-	if [[ "$if_auth" -eq 1 ]]
-	then
-		local file_content=`wget --quiet						\
-								 --user				"$auth_usr"	\
-								 --password			"$auth_pwd"	\
-								 --output-document	-			\
-								 "$file_url"`
-	else
-		local file_content=`wget --quiet				\
-								 --output-document	-	\
-								 "$file_url"`
-	fi
+    if [[ "$if_auth" -eq 1 ]]
+    then
+        local file_content=`wget --quiet                        \
+                                 --user             "$auth_usr" \
+                                 --password         "$auth_pwd" \
+                                 --output-document  -           \
+                                 "$file_url"`
+    else
+        local file_content=`wget --quiet                \
+                                 --output-document  -   \
+                                 "$file_url"`
+    fi
 
-	echo "$file_content"
-	return 0
+    echo "$file_content"
+    return 0
 }
 
-# function : 	setlock
+# function :    setlock
 # description : creates lockfile
 setlock ()
 {
-	if [[ -e "$lockfile" ]]
-	then
-		echo "GoTYPO already running with PID `cat "$lockfile"`"
-		return 1
-	else
-		echo $$ > "$lockfile"
-		return 0
-	fi
+    if [[ -e "$lockfile" ]]
+    then
+        echo "GoTYPO already running with PID `cat "$lockfile"`"
+        return 1
+    else
+        echo $$ > "$lockfile"
+        return 0
+    fi
 }
 
-# function : 	unsetlock
+# function :    unsetlock
 # description : deletes lockfile
 unsetlock ()
 {
-	if [[ -e "$lockfile" ]]
-	then
-		rm "$lockfile"
-	fi
-	return 0
+    if [[ -e "$lockfile" ]]
+    then
+        rm "$lockfile"
+    fi
+    return 0
 }
 
 
@@ -98,7 +98,7 @@ unsetlock ()
 # load configuration if exists
 if [[ -e /opt/ics/gotypo/conf.local ]]
 then
-	source /opt/ics/gotypo/conf.local
+    source /opt/ics/gotypo/conf.local
 fi
 GOTYPO_IFAUTH=${GOTYPO_IFAUTH:-0}
 GOTYPO_AUTHUSR=${GOTYPO_AUTHUSR:-"no-user-defined"}
@@ -126,15 +126,15 @@ export GOTYPO_SRV
 
 # create lockfile and set trap
 setlock
-trap 'echo "Error Encountered in $0"	
-	  unsetlock								
-	  exit 1'								\
-	  INT TERM EXIT
+trap 'echo "Error Encountered in $0"
+      unsetlock
+      exit 1'                       \
+      INT TERM EXIT
 
 # create modules directory
 if ! [[ -d $mods_path ]]
 then
-	mkdir -p $mods_path
+    mkdir -p $mods_path
 fi
 
 # download list of available modules
@@ -145,31 +145,31 @@ IFS='
 '
 for i in $mods_available
 do
-	modules[$mods_count]=$i
-	((mods_count++))
+    modules[$mods_count]=$i
+    ((mods_count++))
 done
 IFS=$OIFS
 
 i=0
 until [[ $i -eq $mods_count ]]
 do
-	params="${params:-""} `echo ${modules[$i]} | cut --delimiter			':'\
-											   --output-delimiter	' '		   \
-											   --fields				'2 3'` 0 "
-	if [[ ${#modules[$i]} -gt $maxwidth ]]
-	then
-		maxwidth=${#modules[$i]}
-	fi
-	((i++))
+    params="${params:-""} `echo ${modules[$i]} | cut --delimiter        ':'      \
+                                                     --output-delimiter ' '      \
+                                                     --fields           '2 3'` 0 "
+    if [[ ${#modules[$i]} -gt $maxwidth ]]
+    then
+        maxwidth=${#modules[$i]}
+    fi
+    ((i++))
 done
 
 height=$((mods_count + 7))
 
 # ask user to select modules
-eval "whiptail --title \"Gotypo\"										\
-			   --checklist \"Select modules to execute:\"				\
-			   $height $(($maxwidth + 10)) $mods_count					\
-			   `echo $params | tr '*' '\"' | tr '_' ' '`" 2>$tempfile
+eval "whiptail --title \"Gotypo\"                                    \
+               --checklist \"Select modules to execute:\"            \
+               $height $(($maxwidth + 10)) $mods_count               \
+               `echo $params | tr '*' '\"' | tr '_' ' '`" 2>$tempfile
 mods_selected=$(<$tempfile)
 rm $tempfile
 
@@ -177,15 +177,15 @@ rm $tempfile
 touch $tempfile
 for i in $mods_selected
 do
-	for j in ${modules[@]}
-	do
-		if [ `echo -n $i | tr -d '"'` = `echo -n $j | cut -d ':' -f '2'` ]
-		then
-			echo $j | cut --delimiter ':'					\
-						  --fields '1 2'					\
-						  --output-delimiter='_' >> $tempfile
-		fi
-	done
+    for j in ${modules[@]}
+    do
+        if [ `echo -n $i | tr -d '"'` = `echo -n $j | cut -d ':' -f '2'` ]
+        then
+            echo $j | cut --delimiter ':'                    \
+                          --fields '1 2'                     \
+                          --output-delimiter='_' >> $tempfile
+        fi
+    done
 done
 
 sort -o $tempfile $tempfile
@@ -195,16 +195,16 @@ rm $tempfile
 # download and execute selected modules
 for i in $mods_list
 do
-	download_content $GOTYPO_IFAUTH						\
-					 "$mods_url$i.sh"					\
-					 $GOTYPO_AUTHUSR					\
-					 $GOTYPO_AUTHPWD > "$mods_path$i.sh"
-	chmod u+x "$mods_path$i.sh"
+    download_content $GOTYPO_IFAUTH                     \
+                     "$mods_url$i.sh"                   \
+                     $GOTYPO_AUTHUSR                    \
+                     $GOTYPO_AUTHPWD > "$mods_path$i.sh"
+    chmod u+x "$mods_path$i.sh"
 done
 
 for i in $mods_list
 do
-	$mods_path$i.sh
+    $mods_path$i.sh
 done
 
 # remove lockfile and reset trap

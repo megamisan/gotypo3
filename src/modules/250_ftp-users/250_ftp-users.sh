@@ -32,7 +32,6 @@ exec 2>> /var/log/gotypo.log
 #===============================================================================
 
 
-
 #===============================================================================
 # variables declaration and initialization
 #===============================================================================
@@ -57,86 +56,86 @@ OLDIFS=""
 # main script
 #===============================================================================
 
-trap 'echo "Error Encountered in $0"								
-	  exit 1'						\
-	  INT TERM EXIT
+trap 'echo "Error Encountered in $0"                                
+      exit 1'                        \
+      INT TERM EXIT
 
 while true
 do
-	# generate system users list
-	params=""
-	OLDIFS=$IFS
-	IFS="
-	"
-	for i in $(</etc/passwd)
-	do
-		if [[ `echo $i | cut -d : -f 3` -gt 999 ]]
-		then
-			sys_user=`echo $i | cut -d : -f 1`
-			((counter++))
-			params="${params:-""} $sys_user 0"
-		fi
-	done
-	IFS=$OLDIFS
+    # generate system users list
+    params=""
+    OLDIFS=$IFS
+    IFS="
+    "
+    for i in $(</etc/passwd)
+    do
+        if [[ `echo $i | cut -d : -f 3` -gt 999 ]]
+        then
+            sys_user=`echo $i | cut -d : -f 1`
+            ((counter++))
+            params="${params:-""} $sys_user 0"
+        fi
+    done
+    IFS=$OLDIFS
 
-	# select system user
-	whiptail --title "GoTYPO : FTP users"										\
-			 --radiolist "Select the system user whose rights will be used :"	\
-			 --noitem															\
-			 $((counter + 7)) 54 $counter										\
-			 $params 2>$tempfile || break
-	sys_user_selected=$(<$tempfile)
-	rm $tempfile
+    # select system user
+    whiptail --title "GoTYPO : FTP users"                                     \
+             --radiolist "Select the system user whose rights will be used :" \
+             --noitem                                                         \
+             $((counter + 7)) 54 $counter                                     \
+             $params 2>$tempfile || break
+    sys_user_selected=$(<$tempfile)
+    rm $tempfile
 
-	line_num=`cut -d : -f 1 /etc/passwd | grep $sys_user_selected -n | cut -d : -f 1`
-	sys_user_home=`awk 'FNR == '$line_num'' /etc/passwd | cut -d : -f 6`
-	sys_user_uid=`awk 'FNR == '$line_num'' /etc/passwd | cut -d : -f 3`
-	sys_user_gid=`awk 'FNR == '$line_num'' /etc/passwd | cut -d : -f 4`
+    line_num=`cut -d : -f 1 /etc/passwd | grep $sys_user_selected -nx | cut -d : -f 1`
+    sys_user_home=`awk 'FNR == '$line_num'' /etc/passwd | cut -d : -f 6`
+    sys_user_uid=`awk 'FNR == '$line_num'' /etc/passwd | cut -d : -f 3`
+    sys_user_gid=`awk 'FNR == '$line_num'' /etc/passwd | cut -d : -f 4`
 
-	# select ftp user name
-	whiptail --title "GoTYPO : FTP users"					\
-			 --inputbox "FTP user name :"					\
-			 8 26 $sys_user_selected						\
-			 2>$tempfile || break
-	ftp_user_name=$(<$tempfile)
-	rm $tempfile
+    # select ftp user name
+    whiptail --title "GoTYPO : FTP users" \
+             --inputbox "FTP user name :" \
+             8 26 $sys_user_selected      \
+             2>$tempfile || break
+    ftp_user_name=$(<$tempfile)
+    rm $tempfile
 
-	# select ftp user home
-	if [[ `echo -n "$sys_user_home" | wc -m` -gt $width_max ]]
-	then
-		width_max=`echo -n "$sys_user_home" | wc -m`
-	fi
+    # select ftp user home
+    if [[ `echo -n "$sys_user_home" | wc -m` -gt $width_max ]]
+    then
+        width_max=`echo -n "$sys_user_home" | wc -m`
+    fi
 
-	whiptail --title "GoTYPO : FTP users"					\
-			 --inputbox "Home directory for the FTP user :"	\
-			 8 $((width_max + 8)) $sys_user_home			\
-			 2>$tempfile || break
-	ftp_user_home=$(<$tempfile)
-	rm $tempfile
+    whiptail --title "GoTYPO : FTP users"                   \
+             --inputbox "Home directory for the FTP user :" \
+             8 $((width_max + 8)) $sys_user_home            \
+             2>$tempfile || break
+    ftp_user_home=$(<$tempfile)
+    rm $tempfile
 
-	# select ftp user password
+    # select ftp user password
 
-	whiptail --title "GoTYPO : FTP users"						\
-			 --inputbox "FTP user password :"					\
-			 8 26 `</dev/urandom tr -dc a-zA-Z0-9 | head -c 8`	\
-			 2>$tempfile || break
-	ftp_user_passwd=$(<$tempfile)
-	rm $tempfile
+    whiptail --title "GoTYPO : FTP users"                      \
+             --inputbox "FTP user password :"                  \
+             8 26 `</dev/urandom tr -dc a-zA-Z0-9 | head -c 8` \
+             2>$tempfile || break
+    ftp_user_passwd=$(<$tempfile)
+    rm $tempfile
 
-	# generate SQL query and execute it
+    # generate SQL query and execute it
 
-	sql_query="INSERT INTO users_plain
-			   VALUES ( '$ftp_user_name',
-			   			'$ftp_user_passwd',
-			   			$sys_user_uid,
-			   			$sys_user_gid,
-			   			'$ftp_user_home',
-			   			1 );"
-	echo $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf ftpserver
+    sql_query="INSERT INTO users_plain
+               VALUES ( '$ftp_user_name',
+                        '$ftp_user_passwd',
+                        $sys_user_uid,
+                        $sys_user_gid,
+                        '$ftp_user_home',
+                        1 );"
+    echo $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf ftpserver
 
-	whiptail --title "GoTYPO : FTP users"		\
-		 	 --yesno "Add another FTP user ?"	\
-		 	 11 22 || break
+    whiptail --title "GoTYPO : FTP users"     \
+             --yesno "Add another FTP user ?" \
+             11 22 || break
 done
 
 trap - INT TERM EXIT
