@@ -29,22 +29,53 @@ set -o errexit
 # variables declaration and initialization
 #===============================================================================
 
-# load configuration if exists
-if [[ -e /opt/ics/gotypo/conf.local ]]
-then
-    source /opt/ics/gotypo/conf.local
-fi
-
-export GOTYPO3_IFAUTH=${GOTYPO3_IFAUTH:-0}
-export GOTYPO3_AUTHUSR=${GOTYPO3_AUTHUSR:-"no-user-defined"}
-export GOTYPO3_AUTHPWD=${GOTYPO3_AUTHPWD:-"no-password-defined"}
-export GOTYPO3_SRV=${GOTYPO3_SRV:-"http://gotypo3.in-cite.net"}
+script_path=`dirname $0`
+install_path=""
 
 #===============================================================================
 # main script
 #===============================================================================
 
-wget $GOTYPO3_SRV/gotypo3.sh -O /tmp/gotypo3.sh
-chmod u+x /tmp/gotypo3.sh
-/tmp/gotypo3.sh
-rm /tmp/gotypo3.sh
+cd $script_path
+
+
+# ask where to install GoTYPO3
+clear
+echo "Enter path to the directory where GoTYPO3 should be installed, this directory will be overwritten if it already exists :"
+read install_path
+
+if [[ -d $install_path ]]
+then
+    rm -R $install_path
+    mkdir $install_path
+else
+    mkdir -p $install_path
+fi
+
+# install base scripts
+cp ./src/gotypo3/* $install_path
+cp ./src/modules/modules_list.txt $install_path
+
+# install modules
+mkdir $install_path/modules
+
+# 100_debian-lenny
+cp ./src/modules/100_debian-lenny/* $install_path/modules
+
+# 200_vhost
+cp ./src/modules/200_vhost/200_vhost.sh $install_path/modules
+cd ./src/modules/200_vhost/vhost_squeleton
+tar -czf ../vhost_squeleton.tgz *
+cd $script_path
+mv ./src/modules/200_vhost/vhost_squeleton.tgz $install_path/modules
+
+# 250_ftp-users
+cp ./src/modules/250_ftp-users/* $install_path/modules
+
+# 300_typo3
+cp ./src/modules/300_typo3/* $install_path/modules
+
+clear
+echo "Installation successful"
+
+exit 0
