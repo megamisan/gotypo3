@@ -138,7 +138,7 @@ if [[ ! -h /var/local/typo3/$typo3_symlink ]] || \
 then
     whiptail --title "GoTYPO3 : TYPO3"                                     \
              --infobox "GoTYPO3 is installing TYPO3 sources, please wait." \
-             6 58
+             7 58
     mkdir -p /var/local/typo3/
     cd /var/local/typo3/
     wget "http://prdownloads.sourceforge.net/typo3/typo3_src-$typo3_version.tar.gz?download"
