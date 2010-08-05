@@ -2,20 +2,20 @@
 #===============================================================================
 #    © Copyright 2010 In Cité Solution
 #
-#    This file is part of GoTYPO.
+#    This file is part of GoTYPO3.
 #
-#    GoTYPO is free software: you can redistribute it and/or modify
+#    GoTYPO3 is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    GoTYPO is distributed in the hope that it will be useful,
+#    GoTYPO3 is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with GoTYPO.  If not, see <http://www.gnu.org/licenses/>.
+#    along with GoTYPO3.  If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
 
 #===============================================================================
@@ -68,7 +68,7 @@ download_file ()
 inputbox()
 {
     whiptail --inputbox                      \
-             --title "GoTYPO : Virtual Host" \
+             --title "GoTYPO3 : Virtual Host" \
              "$1" 8 50 2> $tempfile
     eval $2=$(<$tempfile)
     rm $tempfile
@@ -80,7 +80,7 @@ inputbox()
 # parameter 1 : question to ask
 question()
 {
-    whiptail --title "GoTYPO : Virtual Host" \
+    whiptail --title "GoTYPO3 : Virtual Host" \
               --yesno "$1"                   \
               11 22
 }
@@ -121,7 +121,7 @@ trap 'echo "Error Encountered in $0"
       INT TERM EXIT
 
 # select TYPO3 version
-whiptail --title "GoTYPO : TYPO3"                        \
+whiptail --title "GoTYPO3 : TYPO3"                        \
          --radiolist "Select TYPO3 version to install :" \
          --noitem                                        \
          10 40 2                                         \
@@ -136,8 +136,8 @@ typo3_symlink="typo3-`echo $typo3_version | cut -d '.' -f '1 2'`"
 if [[ ! -h /var/local/typo3/$typo3_symlink ]] || \
    [[ `readlink /var/local/typo3/$typo3_symlink | cut -d '.' -f '3'` -lt `echo $typo3_version | cut -d '.' -f '3'` ]]
 then
-    whiptail --title "GoTYPO : TYPO3"                                     \
-             --infobox "GoTYPO is installing TYPO3 sources, please wait." \
+    whiptail --title "GoTYPO3 : TYPO3"                                     \
+             --infobox "GoTYPO3 is installing TYPO3 sources, please wait." \
              6 58
     mkdir -p /var/local/typo3/
     cd /var/local/typo3/
@@ -172,7 +172,7 @@ done
 height=$((vhosts_count + 7))
 
 # select virtual hosts in which TYPO3 should be installed
-whiptail --title "GoTYPO : TYPO3"                             \
+whiptail --title "GoTYPO3 : TYPO3"                             \
          --checklist "Select vhosts for TYPO3 installation :" \
          --noitem                                             \
          $height $(($maxwidth + 12)) $vhosts_count            \
@@ -213,19 +213,19 @@ do
     rm $vhost_dir/httpdocs/typo3_src
     ln -s /var/local/typo3/$typo3_symlink $vhost_dir/httpdocs/typo3_src
     
-    # download the localconf.php and .htaccess files from GoTYPO server
+    # download the localconf.php and .htaccess files from GoTYPO3 server
     rm $vhost_dir/httpdocs/typo3conf/localconf.php
-    download_file "$GOTYPO_IFAUTH"                                         \
-                  "$GOTYPO_SRV/modules/dummy-$typo3_version/localconf.php" \
+    download_file "$GOTYPO3_IFAUTH"                                         \
+                  "$GOTYPO3_SRV/modules/dummy-$typo3_version/localconf.php" \
                   "$vhost_dir/httpdocs/typo3conf/localconf.php"            \
-                  "$GOTYPO_AUTHUSR"                                        \
-                  "$GOTYPO_AUTHPWD"
+                  "$GOTYPO3_AUTHUSR"                                        \
+                  "$GOTYPO3_AUTHPWD"
                   
-    download_file "$GOTYPO_IFAUTH"                                    \
-                  "$GOTYPO_SRV/modules/dummy-$typo3_version/htaccess" \
+    download_file "$GOTYPO3_IFAUTH"                                    \
+                  "$GOTYPO3_SRV/modules/dummy-$typo3_version/htaccess" \
                   "$vhost_dir/httpdocs/.htaccess"                     \
-                  "$GOTYPO_AUTHUSR"                                   \
-                  "$GOTYPO_AUTHPWD"
+                  "$GOTYPO3_AUTHUSR"                                   \
+                  "$GOTYPO3_AUTHPWD"
 
     # configure localconf.php
     sed -i     -e "s/\${sitename}/$i/g"             \

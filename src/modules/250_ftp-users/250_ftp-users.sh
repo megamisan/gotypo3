@@ -2,20 +2,20 @@
 #===============================================================================
 #    © Copyright 2010 In Cité Solution
 #
-#    This file is part of GoTYPO.
+#    This file is part of GoTYPO3.
 #
-#    GoTYPO is free software: you can redistribute it and/or modify
+#    GoTYPO3 is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    GoTYPO is distributed in the hope that it will be useful,
+#    GoTYPO3 is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with GoTYPO.  If not, see <http://www.gnu.org/licenses/>.
+#    along with GoTYPO3.  If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
 
 #===============================================================================
@@ -79,7 +79,7 @@ do
     IFS=$OLDIFS
 
     # select system user
-    whiptail --title "GoTYPO : FTP users"                                     \
+    whiptail --title "GoTYPO3 : FTP users"                                     \
              --radiolist "Select the system user whose rights will be used :" \
              --noitem                                                         \
              $((counter + 7)) 54 $counter                                     \
@@ -93,7 +93,7 @@ do
     sys_user_gid=`awk 'FNR == '$line_num'' /etc/passwd | cut -d : -f 4`
 
     # select ftp user name
-    whiptail --title "GoTYPO : FTP users" \
+    whiptail --title "GoTYPO3 : FTP users" \
              --inputbox "FTP user name :" \
              8 26 $sys_user_selected      \
              2>$tempfile || break
@@ -106,7 +106,7 @@ do
         width_max=`echo -n "$sys_user_home" | wc -m`
     fi
 
-    whiptail --title "GoTYPO : FTP users"                   \
+    whiptail --title "GoTYPO3 : FTP users"                   \
              --inputbox "Home directory for the FTP user :" \
              8 $((width_max + 8)) $sys_user_home            \
              2>$tempfile || break
@@ -115,7 +115,7 @@ do
 
     # select ftp user password
 
-    whiptail --title "GoTYPO : FTP users"                      \
+    whiptail --title "GoTYPO3 : FTP users"                      \
              --inputbox "FTP user password :"                  \
              8 26 `</dev/urandom tr -dc a-zA-Z0-9 | head -c 8` \
              2>$tempfile || break
@@ -133,7 +133,7 @@ do
                         1 );"
     echo $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf ftpserver
 
-    whiptail --title "GoTYPO : FTP users"     \
+    whiptail --title "GoTYPO3 : FTP users"     \
              --yesno "Add another FTP user ?" \
              11 22 || break
 done

@@ -2,20 +2,20 @@
 #===============================================================================
 #    © Copyright 2010 In Cité Solution
 #
-#    This file is part of GoTYPO.
+#    This file is part of GoTYPO3.
 #
-#    GoTYPO is free software: you can redistribute it and/or modify
+#    GoTYPO3 is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    GoTYPO is distributed in the hope that it will be useful,
+#    GoTYPO3 is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with GoTYPO.  If not, see <http://www.gnu.org/licenses/>.
+#    along with GoTYPO3.  If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
 
 #===============================================================================
@@ -68,7 +68,7 @@ download_file ()
 inputbox()
 {
     whiptail --inputbox                      \
-             --title "GoTYPO : Virtual Host" \
+             --title "GoTYPO3 : Virtual Host" \
              "$1" 8 50 2> $tempfile
     eval $2=$(<$tempfile)
     rm $tempfile
@@ -80,7 +80,7 @@ inputbox()
 # parameter 1 : question to ask
 question()
 {
-    whiptail --title "GoTYPO : Virtual Host" \
+    whiptail --title "GoTYPO3 : Virtual Host" \
               --yesno "$1"                   \
               11 22
 }
@@ -147,11 +147,11 @@ do
     done
 
     # download and decompress the Virtual Host skeleton
-    download_file "$GOTYPO_IFAUTH"                         \
-                  "$GOTYPO_SRV/modules/vhost_skeleton.tgz" \
+    download_file "$GOTYPO3_IFAUTH"                         \
+                  "$GOTYPO3_SRV/modules/vhost_skeleton.tgz" \
                   "/tmp/vhost_skeleton.tgz"                \
-                  "$GOTYPO_AUTHUSR"                        \
-                  "$GOTYPO_AUTHPWD"
+                  "$GOTYPO3_AUTHUSR"                        \
+                  "$GOTYPO3_AUTHPWD"
     mkdir --parents /var/www/vhosts/$vhost_fqdn
     cd /var/www/vhosts/$vhost_fqdn
     tar -xzf /tmp/vhost_skeleton.tgz
@@ -190,7 +190,7 @@ do
     touch /opt/ics/gotypo/report_$vhost_fqdn
     chmod 600 /opt/ics/gotypo/report_$vhost_fqdn
 
-    echo "---GoTYPO report for $vhost_fqdn---" >> /opt/ics/gotypo/report_$vhost_fqdn
+    echo "---GoTYPO3 report for $vhost_fqdn---" >> /opt/ics/gotypo/report_$vhost_fqdn
     echo "---DO NOT EDIT---" >> /opt/ics/gotypo/report_$vhost_fqdn
     echo "Directory : /var/www/vhosts/$vhost_fqdn" >> /opt/ics/gotypo/report_$vhost_fqdn
     echo "System user : $vhost_usr" >> /opt/ics/gotypo/report_$vhost_fqdn

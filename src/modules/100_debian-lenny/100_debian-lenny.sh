@@ -2,20 +2,20 @@
 #===============================================================================
 #    © Copyright 2010 In Cité Solution
 #
-#    This file is part of GoTYPO.
+#    This file is part of GoTYPO3.
 #
-#    GoTYPO is free software: you can redistribute it and/or modify
+#    GoTYPO3 is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    GoTYPO is distributed in the hope that it will be useful,
+#    GoTYPO3 is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with GoTYPO.  If not, see <http://www.gnu.org/licenses/>.
+#    along with GoTYPO3.  If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
 
 #===============================================================================
@@ -90,11 +90,11 @@ configure_proftpd ()
     echo $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf 'mysql'
 
 
-    download_file "$GOTYPO_IFAUTH"                         \
-                  "$GOTYPO_SRV/modules/proftpd_schema.sql" \
+    download_file "$GOTYPO3_IFAUTH"                         \
+                  "$GOTYPO3_SRV/modules/proftpd_schema.sql" \
                   "/tmp/proftpd_schema.sql"                \
-                  "$GOTYPO_AUTHUSR"                        \
-                  "$GOTYPO_AUTHPWD"
+                  "$GOTYPO3_AUTHUSR"                        \
+                  "$GOTYPO3_AUTHPWD"
     mysql --defaults-file=/etc/mysql/debian.cnf \
           ftpserver                             \
           < /tmp/proftpd_schema.sql
@@ -117,31 +117,31 @@ configure_proftpd ()
     then
         rm /etc/proftpd/proftpd.conf
     fi
-    download_file "$GOTYPO_IFAUTH"                           \
-                  "$GOTYPO_SRV/modules/proftpd_proftpd.conf" \
+    download_file "$GOTYPO3_IFAUTH"                           \
+                  "$GOTYPO3_SRV/modules/proftpd_proftpd.conf" \
                   "/etc/proftpd/proftpd.conf"                \
-                  "$GOTYPO_AUTHUSR"                          \
-                  "$GOTYPO_AUTHPWD"
+                  "$GOTYPO3_AUTHUSR"                          \
+                  "$GOTYPO3_AUTHPWD"
 
     if [[ -f /etc/proftpd/modules.conf ]]
     then
         rm /etc/proftpd/modules.conf
     fi
-    download_file "$GOTYPO_IFAUTH"                           \
-                  "$GOTYPO_SRV/modules/proftpd_modules.conf" \
+    download_file "$GOTYPO3_IFAUTH"                           \
+                  "$GOTYPO3_SRV/modules/proftpd_modules.conf" \
                   "/etc/proftpd/modules.conf"                \
-                  "$GOTYPO_AUTHUSR"                          \
-                  "$GOTYPO_AUTHPWD"
+                  "$GOTYPO3_AUTHUSR"                          \
+                  "$GOTYPO3_AUTHPWD"
 
     if [[ -f /etc/proftpd/sql.conf ]]
     then
         rm /etc/proftpd/sql.conf
     fi
-    download_file "$GOTYPO_IFAUTH"                       \
-                  "$GOTYPO_SRV/modules/proftpd_sql.conf" \
+    download_file "$GOTYPO3_IFAUTH"                       \
+                  "$GOTYPO3_SRV/modules/proftpd_sql.conf" \
                   "/etc/proftpd/sql.conf"                \
-                  "$GOTYPO_AUTHUSR"                      \
-                  "$GOTYPO_AUTHPWD"
+                  "$GOTYPO3_AUTHUSR"                      \
+                  "$GOTYPO3_AUTHPWD"
 
     chmod 640 /etc/proftpd/sql.conf
     sed -i -e "s/\${proftpd_dbpwd}/$proftpd_dbpwd/g" \
@@ -233,7 +233,7 @@ do
     proftpd_status="OK"
     for i in $proftpd_list
     do
-        if ! grep -s "###GoTYPO" /etc/proftpd/$i
+        if ! grep -s "###GoTYPO3" /etc/proftpd/$i
         then
             proftpd_status="KO"
         fi
@@ -249,7 +249,7 @@ do
     fi
 
     # select a report
-    whiptail --title "GoTYPO : Debian Lenny" \
+    whiptail --title "GoTYPO3 : Debian Lenny" \
              --menu "Reports :"              \
              10 30 3                         \
              packages "[$pkgs_status]"       \
@@ -263,11 +263,11 @@ do
     "packages")
         if [[ "$pkgs_status" = "OK" ]]
         then
-            whiptail --title  "GoTYPO : Debian Lenny"             \
+            whiptail --title  "GoTYPO3 : Debian Lenny"             \
                      --msgbox "All needed packages are installed" \
                      10 30
         else
-            whiptail --title "GoTYPO : Debian Lenny"                        \
+            whiptail --title "GoTYPO3 : Debian Lenny"                        \
                      --yesno "`echo -e "Those packages are not installed :" \
                                       "\n"                                  \
                                       "\n$pkgs_missing"                     \
@@ -287,33 +287,33 @@ do
     "logrotate")
         if [[ "$logrot_status" = "OK" ]]
         then
-            whiptail --title  "GoTYPO : Debian Lenny"                          \
+            whiptail --title  "GoTYPO3 : Debian Lenny"                          \
                      --msgbox "Logrotate configuration file \"vhosts\" exists" \
                      10 30
         else
-            whiptail --title "GoTYPO : Debian Lenny"                                 \
+            whiptail --title "GoTYPO3 : Debian Lenny"                                 \
                      --yesno "`echo -e "Logrotate configuration file does not exist" \
                                       "\n"                                           \
                                       "\nCreate it ?"`"                              \
                      10 30                                                           \
-                     &&    download_file "$GOTYPO_IFAUTH"                         \
-                                      "$GOTYPO_SRV/modules/logrotate_vhosts.conf" \
+                     &&    download_file "$GOTYPO3_IFAUTH"                         \
+                                      "$GOTYPO3_SRV/modules/logrotate_vhosts.conf" \
                                       "/etc/logrotate.d/vhosts"                   \
-                                      "$GOTYPO_AUTHUSR"                           \
-                                      "$GOTYPO_AUTHPWD" || true
+                                      "$GOTYPO3_AUTHUSR"                           \
+                                      "$GOTYPO3_AUTHPWD" || true
         fi
         ;;
     "proftpd")
         if [[ "$proftpd_status" = "OK" ]]
         then
-            whiptail --title  "GoTYPO : Debian Lenny"           \
+            whiptail --title  "GoTYPO3 : Debian Lenny"           \
                      --msgbox "proftpd is correctly configured" \
                      10 30
         else
-            whiptail --title "GoTYPO : Debian Lenny"                           \
+            whiptail --title "GoTYPO3 : Debian Lenny"                           \
                      --yesno "`echo -e "proftpd is not correctly configured."  \
                                       "\n"                                     \
-                                      "\nApply default GoTYPO configuration ?" \
+                                      "\nApply default GoTYPO3 configuration ?" \
                                       "\n"                                     \
                                       "\nIMPORTANT : This will drop ftpserver" \
                                       "mysql database and proftpd mysql user " \

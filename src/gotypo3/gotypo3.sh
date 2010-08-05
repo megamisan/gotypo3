@@ -2,20 +2,20 @@
 #===============================================================================
 #    © Copyright 2010 In Cité Solution
 #
-#    This file is part of GoTYPO.
+#    This file is part of GoTYPO3.
 #
-#    GoTYPO is free software: you can redistribute it and/or modify
+#    GoTYPO3 is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    GoTYPO is distributed in the hope that it will be useful,
+#    GoTYPO3 is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with GoTYPO.  If not, see <http://www.gnu.org/licenses/>.
+#    along with GoTYPO3.  If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
 
 #===============================================================================
@@ -71,7 +71,7 @@ setlock ()
 {
     if [[ -e "$lockfile" ]]
     then
-        echo "GoTYPO already running with PID `cat "$lockfile"`"
+        echo "GoTYPO3 already running with PID `cat "$lockfile"`"
         return 1
     else
         echo $$ > "$lockfile"
@@ -100,12 +100,12 @@ if [[ -e /opt/ics/gotypo/conf.local ]]
 then
     source /opt/ics/gotypo/conf.local
 fi
-GOTYPO_IFAUTH=${GOTYPO_IFAUTH:-0}
-GOTYPO_AUTHUSR=${GOTYPO_AUTHUSR:-"no-user-defined"}
-GOTYPO_AUTHPWD=${GOTYPO_AUTHPWD:-"no-password-defined"}
-GOTYPO_SRV=${GOTYPO_SRV:-"http://gotypo.in-cite.net"}
-list_url=${list_url:-"$GOTYPO_SRV/modules_list.txt"}
-mods_url=${mods_url:-"$GOTYPO_SRV/modules/"}
+GOTYPO3_IFAUTH=${GOTYPO3_IFAUTH:-0}
+GOTYPO3_AUTHUSR=${GOTYPO3_AUTHUSR:-"no-user-defined"}
+GOTYPO3_AUTHPWD=${GOTYPO3_AUTHPWD:-"no-password-defined"}
+GOTYPO3_SRV=${GOTYPO3_SRV:-"http://gotypo.in-cite.net"}
+list_url=${list_url:-"$GOTYPO3_SRV/modules_list.txt"}
+mods_url=${mods_url:-"$GOTYPO3_SRV/modules/"}
 mods_path=${mods_path:-"/opt/ics/gotypo/modules/"}
 lockfile=${lockfile:-"/tmp/gotypo_lock"}
 tempfile=${tempfile:-"/tmp/gotypo_temp"}
@@ -115,10 +115,10 @@ width=0
 maxwidth=0
 params=""
 
-export GOTYPO_IFAUTH
-export GOTYPO_AUTHUSR
-export GOTYPO_AUTHPWD
-export GOTYPO_SRV
+export GOTYPO3_IFAUTH
+export GOTYPO3_AUTHUSR
+export GOTYPO3_AUTHPWD
+export GOTYPO3_SRV
 
 #===============================================================================
 # main script
@@ -138,7 +138,7 @@ then
 fi
 
 # download list of available modules
-mods_available=`download_content "$GOTYPO_IFAUTH" "$list_url" "$GOTYPO_AUTHUSR" "$GOTYPO_AUTHPWD"`
+mods_available=`download_content "$GOTYPO3_IFAUTH" "$list_url" "$GOTYPO3_AUTHUSR" "$GOTYPO3_AUTHPWD"`
 
 OIFS=$IFS
 IFS='
@@ -195,10 +195,10 @@ rm $tempfile
 # download and execute selected modules
 for i in $mods_list
 do
-    download_content $GOTYPO_IFAUTH                     \
+    download_content $GOTYPO3_IFAUTH                     \
                      "$mods_url$i.sh"                   \
-                     $GOTYPO_AUTHUSR                    \
-                     $GOTYPO_AUTHPWD > "$mods_path$i.sh"
+                     $GOTYPO3_AUTHUSR                    \
+                     $GOTYPO3_AUTHPWD > "$mods_path$i.sh"
     chmod u+x "$mods_path$i.sh"
 done
 
@@ -212,5 +212,5 @@ unsetlock
 trap - INT TERM EXIT
 
 # exit without errors
-echo "GoTYPO execution successful"
+echo "GoTYPO3 execution successful"
 exit 0
