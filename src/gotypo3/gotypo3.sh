@@ -95,15 +95,6 @@ unsetlock ()
 # variables declaration and initialization
 #===============================================================================
 
-# load configuration if exists
-if [[ -e /opt/ics/gotypo/conf.local ]]
-then
-    source /opt/ics/gotypo/conf.local
-fi
-GOTYPO3_IFAUTH=${GOTYPO3_IFAUTH:-0}
-GOTYPO3_AUTHUSR=${GOTYPO3_AUTHUSR:-"no-user-defined"}
-GOTYPO3_AUTHPWD=${GOTYPO3_AUTHPWD:-"no-password-defined"}
-GOTYPO3_SRV=${GOTYPO3_SRV:-"http://gotypo.in-cite.net"}
 list_url=${list_url:-"$GOTYPO3_SRV/modules_list.txt"}
 mods_url=${mods_url:-"$GOTYPO3_SRV/modules/"}
 mods_path=${mods_path:-"/opt/ics/gotypo/modules/"}
@@ -114,11 +105,6 @@ height=0
 width=0
 maxwidth=0
 params=""
-
-export GOTYPO3_IFAUTH
-export GOTYPO3_AUTHUSR
-export GOTYPO3_AUTHPWD
-export GOTYPO3_SRV
 
 #===============================================================================
 # main script
