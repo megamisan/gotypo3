@@ -36,8 +36,11 @@ install_path=""
 # main script
 #===============================================================================
 
+if [[ $script_path == '.' ]]
+then
+    script_path=`pwd`
+fi
 cd $script_path
-
 
 # ask where to install GoTYPO3
 clear
@@ -64,16 +67,16 @@ cp ./src/modules/100_debian-lenny/* $install_path/modules
 
 # 200_vhost
 cp ./src/modules/200_vhost/200_vhost.sh $install_path/modules
-cd ./src/modules/200_vhost/vhost_squeleton
-tar -czf ../vhost_squeleton.tgz *
+cd ./src/modules/200_vhost/vhost_skeleton
+tar -czf vhost_skeleton.tgz ./
+mv vhost_skeleton.tgz $install_path/modules
 cd $script_path
-mv ./src/modules/200_vhost/vhost_squeleton.tgz $install_path/modules
 
 # 250_ftp-users
 cp ./src/modules/250_ftp-users/* $install_path/modules
 
 # 300_typo3
-cp ./src/modules/300_typo3/* $install_path/modules
+cp -R ./src/modules/300_typo3/* $install_path/modules
 
 clear
 echo "Installation successful"

@@ -66,7 +66,7 @@ do
     params=""
     OLDIFS=$IFS
     IFS="
-    "
+"
     for i in $(</etc/passwd)
     do
         if [[ `echo $i | cut -d : -f 3` -gt 999 ]]

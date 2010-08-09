@@ -194,7 +194,7 @@ proftpd_missing=""
 pkgs_status="OK"
 logrot_status="OK"
 proftpd_status="OK"
-proftpd_list="proftpd_modules.conf proftpd_proftpd.conf proftpd_sql.conf"
+proftpd_list="modules.conf proftpd.conf sql.conf"
 
 #===============================================================================
 # main script
@@ -244,8 +244,6 @@ do
         then
             proftpd_status="KO"
         fi
-    else
-        proftpd_status="KO"
     fi
 
     # select a report

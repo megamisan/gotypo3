@@ -132,17 +132,10 @@ do
     question "Add an alias ?" && if_alias=1 || true
     aliases=""
     
-    if [[ $if_alias -eq 1 ]]
-    then
-        inputbox "Alias to add :" "alias"
-        aliases="ServerAlias $alias"
-        question "Add another alias ?" || if_alias=0
-    fi
-        
     while [[ $if_alias -eq 1 ]]
     do
         inputbox "Alias to add :" "alias"
-        aliases=$aliases'\n'"ServerAlias $alias"
+        aliases=${aliases:-""}'\n'"ServerAlias $alias"
         question "Add another alias ?" || if_alias=0
     done
 
