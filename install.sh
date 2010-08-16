@@ -31,6 +31,7 @@ set -o errexit
 
 script_path=`dirname $0`
 install_path=""
+server_url=""
 
 #===============================================================================
 # main script
@@ -55,9 +56,16 @@ else
     mkdir -p $install_path
 fi
 
+# ask the server url
+clear
+echo "Enter the URL (without leading http://) from where GoTYPO3 will be accessed :"
+read server_url
+
 # install base scripts
 cp ./src/gotypo3/* $install_path
 cp ./src/modules/modules_list.txt $install_path
+
+sed -i -e "s/no-server-url/$server_url/g" $install_path/launcher.sh
 
 # install modules
 mkdir $install_path/modules

@@ -38,7 +38,7 @@ fi
 export GOTYPO3_IFAUTH=${GOTYPO3_IFAUTH:-0}
 export GOTYPO3_AUTHUSR=${GOTYPO3_AUTHUSR:-"no-user-defined"}
 export GOTYPO3_AUTHPWD=${GOTYPO3_AUTHPWD:-"no-password-defined"}
-export GOTYPO3_SRV=${GOTYPO3_SRV:-"http://gotypo3.in-cite.net"}
+export GOTYPO3_SRV=${GOTYPO3_SRV:-"http://no-server-url"}
 
 #===============================================================================
 # main script
