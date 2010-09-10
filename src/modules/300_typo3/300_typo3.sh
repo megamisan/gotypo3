@@ -125,8 +125,8 @@ whiptail --title "GoTYPO3 : TYPO3"                        \
          --radiolist "Select TYPO3 version to install :" \
          --noitem                                        \
          10 40 2                                         \
-         "4.3.4" 0                                       \
-         "4.4.1" 0                                       \
+         "4.3.5" 0                                       \
+         "4.4.2" 0                                       \
          2>$tempfile
 typo3_version=$(<$tempfile)
 rm $tempfile
