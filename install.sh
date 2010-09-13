@@ -76,8 +76,8 @@ cp ./src/modules/100_debian-lenny/* $install_path/modules
 # 200_vhost
 cp ./src/modules/200_vhost/200_vhost.sh $install_path/modules
 cd ./src/modules/200_vhost/vhost_skeleton
-tar -czf vhost_skeleton.tgz ./
-mv vhost_skeleton.tgz $install_path/modules
+tar -czf /tmp/vhost_skeleton.tgz ./
+mv /tmp/vhost_skeleton.tgz $install_path/modules
 cd $script_path
 
 # 250_ftp-users
