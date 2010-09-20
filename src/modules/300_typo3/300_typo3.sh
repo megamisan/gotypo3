@@ -141,7 +141,8 @@ then
              7 58
     mkdir -p /var/local/typo3/
     cd /var/local/typo3/
-    wget "http://prdownloads.sourceforge.net/typo3/typo3_src-$typo3_version.tar.gz?download"
+    wget -O "typo3_src-$typo3_version.tar.gz" \
+         "http://prdownloads.sourceforge.net/typo3/typo3_src-$typo3_version.tar.gz?download"
     tar -xzf typo3_src-$typo3_version.tar.gz
     rm typo3_src-$typo3_version.tar.gz
     if [[ -h /var/local/typo3/$typo3_symlink ]]
@@ -187,8 +188,8 @@ do
     vhost_dir=`grep "Directory" "/opt/ics/gotypo/report_$i" | cut -d : -f 2 | tr -d [:space:]`
     vhost_user=`grep "System user" "/opt/ics/gotypo/report_$i" | cut -d : -f 2 | tr -d [:space:]`
     typo3_key=`</dev/urandom tr -dc a-f0-9 | head -c 96`
-    typo3_db=$vhost_user
-    typo3_dbusr=$vhost_user
+    typo3_db=`echo $vhost_user | cut -c 1-16`
+    typo3_dbusr=$typo3_db
     typo3_dbpwd=`</dev/urandom tr -dc a-zA-Z0-9 | head -c 8`
     typo3_dbhost="localhost"
     typo3_adminpwd=`</dev/urandom tr -dc a-zA-Z0-9 | head -c 8`
@@ -205,7 +206,8 @@ do
     
     # dowload and unpack the dummy package from sourceforge
     cd $vhost_dir/httpdocs
-    wget "http://prdownloads.sourceforge.net/typo3/dummy-$typo3_version.tar.gz?download"
+    wget -O "dummy-$typo3_version.tar.gz" \
+         "http://prdownloads.sourceforge.net/typo3/dummy-$typo3_version.tar.gz?download"
     tar -xzf dummy-$typo3_version.tar.gz
     mv dummy-$typo3_version/* ./
     rmdir dummy-$typo3_version
@@ -216,7 +218,7 @@ do
     # download the localconf.php and .htaccess files from GoTYPO3 server
     rm $vhost_dir/httpdocs/typo3conf/localconf.php
     download_file "$GOTYPO3_IFAUTH"                                         \
-                  "$GOTYPO3_SRV/modules/dummy-$typo3_version/localconf.php" \
+                  "$GOTYPO3_SRV/modules/dummy-$typo3_version/localconf" \
                   "$vhost_dir/httpdocs/typo3conf/localconf.php"            \
                   "$GOTYPO3_AUTHUSR"                                        \
                   "$GOTYPO3_AUTHPWD"

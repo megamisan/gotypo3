@@ -1,4 +1,5 @@
 100:debian-lenny:*Configure_Debian*
 200:vhost:*Add_vhost*
+225:awstats:*Configure_Awstats*
 250:ftp-users:*Create_FTP_users*
 300:typo3:*Install_typo3*

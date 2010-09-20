@@ -152,6 +152,45 @@ configure_proftpd ()
     return 0
 }
 
+# function :     configure_awstats
+# description :  configures awstats and associated logrotate script.
+configure_awstats ()
+{
+    # enable static pages generation script
+    cp /usr/share/doc/awstats/examples/awstats_buildstaticpages.pl \
+       /usr/lib/cgi-bin/awstats_buildstaticpages.pl
+
+    # download daily stats update script
+    download_file "$GOTYPO3_IFAUTH"                         \
+                  "$GOTYPO3_SRV/modules/awstats_daily.cron" \
+                  "/etc/cron.daily/awstats"                 \
+                  "$GOTYPO3_AUTHUSR"                        \
+                  "$GOTYPO3_AUTHPWD"
+
+    chmod 755 /etc/cron.daily/awstats
+
+    download_file "$GOTYPO3_IFAUTH"                        \
+                  "$GOTYPO3_SRV/modules/awstats_update.sh" \
+                  "/opt/ics/gotypo/awstats_update.sh"      \
+                  "$GOTYPO3_AUTHUSR"                       \
+                  "$GOTYPO3_AUTHPWD"
+
+    chmod 755 /opt/ics/gotypo/awstats_update.sh
+
+    # declare and insert the prerotate script into /etc/logrotate.d/vhosts
+    local awstats_prerotate="prerotate
+        for cfg in \`find /etc/awstats -name 'awstats.*.conf' -printf '%f\\\n' | sed 's/^awstats\\\.\\\(.*\\\)\\\.conf/\\\1/'\`
+        do
+            /opt/ics/gotypo/awstats_update.sh \\\$cfg >/dev/null
+        done
+    endscript"
+
+    perl -pi -e "s#\#\#\#PREROTATE_END\#\#\##${awstats_prerotate}\n\t\#\#\#PREROTATE_END\#\#\##" \
+                /etc/logrotate.d/vhosts
+
+    return 0
+}
+
 #===============================================================================
 # variables declaration and initialization
 #===============================================================================
@@ -194,6 +233,7 @@ proftpd_missing=""
 pkgs_status="OK"
 logrot_status="OK"
 proftpd_status="OK"
+awstats_status="OK"
 proftpd_list="modules.conf proftpd.conf sql.conf"
 
 #===============================================================================
@@ -246,13 +286,27 @@ do
         fi
     fi
 
+    # generate awstats report
+    
+    awstats_status="OK"
+    if ! grep "awstats_update.sh" /etc/logrotate.d/vhosts
+    then
+        awstats_status="KO"
+    else
+        if [[ ! -f /opt/ics/gotypo/awstats_update.sh ]]
+        then
+            awstats_status="KO"
+        fi
+    fi
+
     # select a report
     whiptail --title "GoTYPO3 : Debian Lenny" \
-             --menu "Reports :"              \
-             10 30 3                         \
-             packages "[$pkgs_status]"       \
-             logrotate "[$logrot_status]"    \
-             proftpd "[$proftpd_status]"     \
+             --menu "Reports :"               \
+             10 30 3                          \
+             packages "[$pkgs_status]"        \
+             logrotate "[$logrot_status]"     \
+             proftpd "[$proftpd_status]"      \
+             awstats "[$awstats_status]"      \
              2>$tempfile || break
     report_selected=$(<$tempfile)
     rm $tempfile
@@ -261,11 +315,11 @@ do
     "packages")
         if [[ "$pkgs_status" = "OK" ]]
         then
-            whiptail --title  "GoTYPO3 : Debian Lenny"             \
+            whiptail --title  "GoTYPO3 : Debian Lenny"            \
                      --msgbox "All needed packages are installed" \
                      10 30
         else
-            whiptail --title "GoTYPO3 : Debian Lenny"                        \
+            whiptail --title "GoTYPO3 : Debian Lenny"                       \
                      --yesno "`echo -e "Those packages are not installed :" \
                                       "\n"                                  \
                                       "\n$pkgs_missing"                     \
@@ -285,18 +339,18 @@ do
     "logrotate")
         if [[ "$logrot_status" = "OK" ]]
         then
-            whiptail --title  "GoTYPO3 : Debian Lenny"                          \
+            whiptail --title  "GoTYPO3 : Debian Lenny"                         \
                      --msgbox "Logrotate configuration file \"vhosts\" exists" \
                      10 30
         else
-            whiptail --title "GoTYPO3 : Debian Lenny"                                 \
+            whiptail --title "GoTYPO3 : Debian Lenny"                                \
                      --yesno "`echo -e "Logrotate configuration file does not exist" \
                                       "\n"                                           \
                                       "\nCreate it ?"`"                              \
                      10 30                                                           \
                      &&    download_file "$GOTYPO3_IFAUTH"                         \
                                       "$GOTYPO3_SRV/modules/logrotate_vhosts.conf" \
-                                      "/etc/logrotate.d/vhosts"                   \
+                                      "/etc/logrotate.d/vhosts"                    \
                                       "$GOTYPO3_AUTHUSR"                           \
                                       "$GOTYPO3_AUTHPWD" || true
         fi
@@ -304,21 +358,36 @@ do
     "proftpd")
         if [[ "$proftpd_status" = "OK" ]]
         then
-            whiptail --title  "GoTYPO3 : Debian Lenny"           \
+            whiptail --title  "GoTYPO3 : Debian Lenny"          \
                      --msgbox "proftpd is correctly configured" \
                      10 30
         else
             whiptail --title "GoTYPO3 : Debian Lenny"                           \
-                     --yesno "`echo -e "proftpd is not correctly configured."  \
-                                      "\n"                                     \
+                     --yesno "`echo -e "proftpd is not correctly configured."   \
+                                      "\n"                                      \
                                       "\nApply default GoTYPO3 configuration ?" \
-                                      "\n"                                     \
-                                      "\nIMPORTANT : This will drop ftpserver" \
-                                      "mysql database and proftpd mysql user " \
-                                      "if they exist, and overwrite proftpd "  \
-                                      "configuration files"`"                  \
-                     15 45                                                     \
+                                      "\n"                                      \
+                                      "\nIMPORTANT : This will drop ftpserver"  \
+                                      "mysql database and proftpd mysql user "  \
+                                      "if they exist, and overwrite proftpd "   \
+                                      "configuration files"`"                   \
+                     15 45                                                      \
                      && configure_proftpd || true
+        fi
+        ;;
+    "awstats")
+        if [[ "$awstats_status" = "OK" ]]
+        then
+            whiptail --title  "GoTYPO3 : Debian Lenny"          \
+                     --msgbox "Awstats is correctly configured" \
+                     10 30
+        else
+            whiptail --title "GoTYPO3 : Debian Lenny"                        \
+                     --yesno "`echo -e "Awstats is not correctly configured" \
+                                      "\n"                                   \
+                                      "\nConfigure it ?"`"                   \
+                     10 30                                                   \
+                     && configure_awstats || true
         fi
         ;;
     *)

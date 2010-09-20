@@ -25,71 +25,43 @@
 set -o nounset
 set -o errexit
 
+exec 2>> /var/log/awstats_update.log
+
 #===============================================================================
 # variables declaration and initialization
 #===============================================================================
 
-script_path=`dirname $0`
-install_path=""
-server_url=""
+awstatsdir="/usr/lib/cgi-bin"
+staticpage="awstatsweb/static"
+month=`date +"%m"`
+year=`date +"%Y"`
 
 #===============================================================================
 # main script
 #===============================================================================
 
-if [[ $script_path == '.' ]]
+if [ ! -d /var/www/vhosts/$1 ]
 then
-    script_path=`pwd`
-fi
-cd $script_path
-
-# ask where to install GoTYPO3
-clear
-echo "Enter path to the directory where GoTYPO3 should be installed, this directory will be overwritten if it already exists :"
-read install_path
-
-if [[ -d $install_path ]]
-then
-    rm -R $install_path
-    mkdir $install_path
-else
-    mkdir -p $install_path
+	echo "Error: domain $1 does not exists" 1>&2
+	exit 1
 fi
 
-# ask the server url
-clear
-echo "Enter the URL (without leading http://) from where GoTYPO3 will be accessed :"
-read server_url
+if [ ! -d /var/www/vhosts/$1/$staticpage/$year-$month ]
+then
+	mkdir /var/www/vhosts/$1/$staticpage/$year-$month 
+fi
 
-# install base scripts
-cp ./src/gotypo3/* $install_path
-cp ./src/modules/modules_list.txt $install_path
+$awstatsdir/awstats_buildstaticpages.pl -config=$1											\
+										-update												\
+										-dir=/var/www/vhosts/$1/$staticpage/$year-$month	\
+										-month=$month										\
+										-year=$year											\
+										-awstatsprog=$awstatsdir/awstats.pl					\
+										-lang=fr
 
-sed -i -e "s/no-server-url/$server_url/g" $install_path/launcher.sh
-
-# install modules
-mkdir $install_path/modules
-
-# 100_debian-lenny
-cp ./src/modules/100_debian-lenny/* $install_path/modules
-
-# 200_vhost
-cp ./src/modules/200_vhost/200_vhost.sh $install_path/modules
-cd ./src/modules/200_vhost/vhost_skeleton
-tar -czf /tmp/vhost_skeleton.tgz ./
-mv /tmp/vhost_skeleton.tgz $install_path/modules
-cd $script_path
-
-# 225_awstats
-cp ./src/modules/225_awstats/* $install_path/modules
-
-# 250_ftp-users
-cp ./src/modules/250_ftp-users/* $install_path/modules
-
-# 300_typo3
-cp -R ./src/modules/300_typo3/* $install_path/modules
-
-clear
-echo "Installation successful"
+if [ ! -d /var/www/vhosts/$1/$staticpage/$year-$month/icon ]
+then
+	ln -s /usr/share/awstats/icon/ /var/www/vhosts/$1/$staticpage/$year-$month/icon
+fi
 
 exit 0
