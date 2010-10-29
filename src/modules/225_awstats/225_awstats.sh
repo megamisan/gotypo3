@@ -129,13 +129,13 @@ do
     mkdir /var/www/vhosts/$i/awstatsweb/static
 
     download_file "$GOTYPO3_IFAUTH"                         \
-                  "$GOTYPO3_SRV/modules/awstats_index.php"  \
+                  "$GOTYPO3_SRV/modules/awstats_index"  \
                   "/var/www/vhosts/$i/awstatsweb/index.php" \
                   "$GOTYPO3_AUTHUSR"                        \
                   "$GOTYPO3_AUTHPWD"
 
     download_file "$GOTYPO3_IFAUTH"                        \
-                  "$GOTYPO3_SRV/modules/awstats_menu.php"  \
+                  "$GOTYPO3_SRV/modules/awstats_menu"  \
                   "/var/www/vhosts/$i/awstatsweb/menu.php" \
                   "$GOTYPO3_AUTHUSR"                       \
                   "$GOTYPO3_AUTHPWD"

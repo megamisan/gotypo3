@@ -11,7 +11,7 @@ while (false !== ($filename = readdir($dh))) {
 rsort($files);
 foreach($files as $filename) {
 	if($filename!="." && $filename!="..") {
-		echo '<a href="static/'.$filename.'/awstats.${DOMAIN}.html" target="awstats">'.$filename.'</a><br />';
+		echo '<a href="static/'.$filename.'/awstats.'.${DOMAIN}.'.html" target="awstats">'.$filename.'</a><br />';
 	}
 }
 
