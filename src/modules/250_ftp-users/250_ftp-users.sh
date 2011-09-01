@@ -72,7 +72,7 @@ do
         if [[ `echo $i | cut -d : -f 3` -gt 999 ]]
         then
             sys_user=`echo $i | cut -d : -f 1`
-            ((counter++))
+            counter=$((counter+1))
             params="${params:-""} $sys_user 0"
         fi
     done

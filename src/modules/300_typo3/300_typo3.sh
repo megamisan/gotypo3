@@ -156,7 +156,7 @@ fi
 for i in `ls -1 /opt/ics/gotypo/report_* | cut -d _ -f 2`
 do
     vhosts[$vhosts_count]=$i
-    ((vhosts_count++))
+    vhosts_count=$((vhosts_count+1))
 done
 
 i=0
@@ -167,7 +167,7 @@ do
     then
         maxwidth=${#vhosts[$i]}
     fi
-    ((i++))
+    i=$((i+1))
 done
 
 height=$((vhosts_count + 7))

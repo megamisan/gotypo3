@@ -89,7 +89,7 @@ trap 'echo "Error Encountered in $0"
 for i in `ls -1 /opt/ics/gotypo/report_* | cut -d _ -f 2`
 do
     vhosts[$vhosts_count]=$i
-    ((vhosts_count++))
+    vhosts_count=$((vhosts_count+1))
 done
 
 i=0

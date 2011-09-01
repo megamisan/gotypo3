@@ -132,7 +132,7 @@ IFS='
 for i in $mods_available
 do
     modules[$mods_count]=$i
-    ((mods_count++))
+    mods_count=$((mods_count+1))
 done
 IFS=$OIFS
 
@@ -146,7 +146,7 @@ do
     then
         maxwidth=${#modules[$i]}
     fi
-    ((i++))
+    i=$((i+1))
 done
 
 height=$((mods_count + 7))

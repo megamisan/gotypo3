@@ -123,7 +123,7 @@ do
     then
         while cut -d : -f 1 /etc/passwd | grep "$vhost_usr"-"$counter"
         do
-            ((counter++))
+            counter=$((counter+1))
         done
         vhost_usr="$vhost_usr"-"$counter"
     fi

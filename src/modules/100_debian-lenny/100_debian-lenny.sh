@@ -220,7 +220,6 @@ pkgs_list="apache2
            php5-xsl
            postfix
            ppthtml
-           proftpd
            proftpd-mod-mysql
            pwgen
            unrtf
