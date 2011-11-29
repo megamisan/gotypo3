@@ -33,12 +33,46 @@ exec 2>> /var/log/awstats_update.log
 
 awstatsdir="/usr/lib/cgi-bin"
 staticpage="awstatsweb/static"
-month=`date +"%m"`
+month=`date +"%-m"`
 year=`date +"%Y"`
 
 #===============================================================================
 # main script
 #===============================================================================
+
+#===============================================================================
+# functions declaration
+#===============================================================================
+
+# function :     previous_month
+# description : remove one month to the month variable, afjusting year if 
+#               necessary
+previous_month()
+{
+	month=$((month - 1))
+	if [ $month -eq 0 ]
+	then
+		month=12
+		year=$((year - 1))
+	fi
+}
+
+case $2 in
+	lastday)
+		if [ `date +%-d` -eq 1 ]
+		then
+			previous_month
+		fi
+	;;
+	lastmonth)
+		previous_month
+	;;
+esac
+
+if [ $month -lt 10 ]
+then
+	month=0$month
+fi
 
 if [ ! -d /var/www/vhosts/$1 ]
 then

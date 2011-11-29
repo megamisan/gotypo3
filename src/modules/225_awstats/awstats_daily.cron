@@ -2,5 +2,5 @@
 
 for cfg in `find /etc/awstats -name 'awstats.*.conf' -printf '%f\n' | sed 's/^awstats\.\(.*\)\.conf/\1/'`
 do
-	/opt/ics/gotypo/awstats_update.sh $cfg >/dev/null
+	/opt/ics/gotypo/awstats_update.sh $cfg lastday >/dev/null
 done

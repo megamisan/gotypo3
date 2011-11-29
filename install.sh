@@ -45,7 +45,7 @@ cd $script_path
 
 # ask where to install GoTYPO3
 clear
-echo "Enter path to the directory where GoTYPO3 should be installed, this directory will be overwritten if it already exists :"
+echo "Enter path to the directory where GoTYPO3 should be installed, this directory will be overwritten if it already exists:"
 read install_path
 
 if [[ -d $install_path ]]
@@ -58,13 +58,14 @@ fi
 
 # ask the server url
 clear
-echo "Enter the URL (without leading http://) from where GoTYPO3 will be accessed :"
+echo "Enter the URL (without leading http://) from where GoTYPO3 will be accessed:"
 read server_url
 
 # install base scripts
 cp ./src/gotypo3/* $install_path
 cp ./src/modules/modules_list.txt $install_path
 
+server_url=${server_url//\//\\\/}
 sed -i -e "s/no-server-url/$server_url/g" $install_path/launcher.sh
 
 # install modules
