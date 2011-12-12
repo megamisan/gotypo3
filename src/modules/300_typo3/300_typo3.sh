@@ -170,13 +170,18 @@ do
     i=$((i+1))
 done
 
-height=$((vhosts_count + 7))
+HEIGHT=$((counter + 7))
+TERM_HEIGHT=25
+if [[ $HEIGHT -gt $TERM_HEIGHT ]]
+then
+	HEIGHT=$TERM_HEIGHT
+fi
 
 # select virtual hosts in which TYPO3 should be installed
 whiptail --title "GoTYPO3 : TYPO3"                             \
          --checklist "Select vhosts for TYPO3 installation :" \
          --noitem                                             \
-         $height $(($maxwidth + 12)) $vhosts_count            \
+         $HEIGHT $(($maxwidth + 12)) $((HEIGHT - 7))          \
          $params 2>$tempfile
 sed -i -e 's/"//g' $tempfile
 vhosts_selected=$(<$tempfile)
@@ -199,7 +204,7 @@ do
                CREATE USER '$typo3_dbusr'@'localhost' IDENTIFIED BY '$typo3_dbpwd';
                GRANT ALL PRIVILEGES ON \`$typo3_db\`.\0052 TO '$typo3_dbusr'@'localhost';
                ALTER DATABASE \`$typo3_db\` DEFAULT CHARACTER SET utf8;
-               ALTER DATABASE \`$typo3_db\` DEFAULT COLLATE utf8_bin;"
+               ALTER DATABASE \`$typo3_db\` DEFAULT COLLATE utf8_general_ci;"
 
     # create the database
     echo -e $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf

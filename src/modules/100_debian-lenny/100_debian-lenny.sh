@@ -157,7 +157,7 @@ configure_proftpd ()
 configure_awstats ()
 {
     # enable static pages generation script
-    cp /usr/share/doc/awstats/examples/awstats_buildstaticpages.pl \
+    cp /usr/share/doc/awstats/*/awstats_buildstaticpages.pl \
        /usr/lib/cgi-bin/awstats_buildstaticpages.pl
 
     # download daily stats update script
@@ -301,7 +301,7 @@ do
     # select a report
     whiptail --title "GoTYPO3 : Debian Lenny" \
              --menu "Reports :"               \
-             10 30 3                          \
+             10 30 4                          \
              packages "[$pkgs_status]"        \
              logrotate "[$logrot_status]"     \
              proftpd "[$proftpd_status]"      \

@@ -77,12 +77,19 @@ do
         fi
     done
     IFS=$OLDIFS
+	
+	HEIGHT=$((counter + 7))
+	TERM_HEIGHT=25
+	if [[ $HEIGHT -gt $TERM_HEIGHT ]]
+	then
+		HEIGHT=$TERM_HEIGHT
+	fi
 
     # select system user
-    whiptail --title "GoTYPO3 : FTP users"                                     \
+    whiptail --title "GoTYPO3 : FTP users"                                    \
              --radiolist "Select the system user whose rights will be used :" \
              --noitem                                                         \
-             $((counter + 7)) 54 $counter                                     \
+             $HEIGHT 54 $((HEIGHT - 7))                                       \
              $params 2>$tempfile || break
     sys_user_selected=$(<$tempfile)
     rm $tempfile
