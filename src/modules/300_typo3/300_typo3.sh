@@ -127,6 +127,7 @@ whiptail --title "GoTYPO3 : TYPO3"                        \
          10 40 2                                         \
          "4.3.5" 0                                       \
          "4.4.2" 0                                       \
+         "4.5.9" 0                                       \
          2>$tempfile
 typo3_version=$(<$tempfile)
 rm $tempfile
@@ -209,7 +210,7 @@ do
     # create the database
     echo -e $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf
     
-    # dowload and unpack the dummy package from sourceforge
+    # download and unpack the dummy package from sourceforge
     cd $vhost_dir/httpdocs
     wget -O "dummy-$typo3_version.tar.gz" \
          "http://prdownloads.sourceforge.net/typo3/dummy-$typo3_version.tar.gz?download"
@@ -242,6 +243,7 @@ do
             -e "s/\${typo3_dbhost}/$typo3_dbhost/g" \
             -e "s/\${typo3_key}/$typo3_key/g"       \
             $vhost_dir/httpdocs/typo3conf/localconf.php
+	cp $vhost_dir/httpdocs/typo3conf/localconf.php $vhost_dir/httpdocs/typo3conf/localconf_install.php
     
     # update permissions
     chown -R $vhost_user:www-data *

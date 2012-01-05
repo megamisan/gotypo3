@@ -157,8 +157,16 @@ configure_proftpd ()
 configure_awstats ()
 {
     # enable static pages generation script
-    cp /usr/share/doc/awstats/*/awstats_buildstaticpages.pl \
+	if [ -f /usr/share/doc/awstats/examples/awstats_buildstaticpages.pl ]
+	then
+		cp /usr/share/doc/awstats/examples/awstats_buildstaticpages.pl \
        /usr/lib/cgi-bin/awstats_buildstaticpages.pl
+	fi
+	if [ -f /usr/share/awstats/tools/awstats_buildstaticpages.pl ]
+	then
+		cp /usr/share/awstats/tools/awstats_buildstaticpages.pl \
+       /usr/lib/cgi-bin/awstats_buildstaticpages.pl
+	fi
 
     # download daily stats update script
     download_file "$GOTYPO3_IFAUTH"                         \
