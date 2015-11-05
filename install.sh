@@ -71,8 +71,8 @@ sed -i -e "s/no-server-url/$server_url/g" $install_path/launcher.sh
 # install modules
 mkdir $install_path/modules
 
-# 100_debian-lenny
-cp ./src/modules/100_debian-lenny/* $install_path/modules
+# 100_debian
+cp ./src/modules/100_debian/* $install_path/modules
 
 # 200_vhost
 cp ./src/modules/200_vhost/200_vhost.sh $install_path/modules
