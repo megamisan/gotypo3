@@ -29,7 +29,7 @@ set -o errexit
 # variables declaration and initialization
 #===============================================================================
 
-script_path=`dirname $0`
+script_path=$(cd "$(dirname "$0")"; pwd)
 install_path=""
 server_url=""
 
