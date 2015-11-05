@@ -45,7 +45,7 @@ year=`date +"%Y"`
 #===============================================================================
 
 # function :     previous_month
-# description : remove one month to the month variable, afjusting year if 
+# description : remove one month to the month variable, adjusting year if 
 #               necessary
 previous_month()
 {
@@ -57,21 +57,38 @@ previous_month()
 	fi
 }
 
-case $2 in
-	lastday)
-		if [ `date +%-d` -eq 1 ]
-		then
-			previous_month
-		fi
-	;;
-	lastmonth)
-		previous_month
-	;;
-esac
+compute_year()
+{
+	local lastmonth=$((month - 1))
+	if [ $month -eq 0 ]
+	then
+		lastmonth=12
+		year=$((year - 1))
+	fi
+	month=$lastmonth
+	lastmonth=$((lastmonth - 1))
+	for (( ; $lastmonth ; lastmonth=$((lastmonth - 1)) ))
+	do
+		month="$lastmonth $month"
+	done
+}
 
-if [ $month -lt 10 ]
+if [ $# -gt 1 ]
 then
-	month=0$month
+	case $2 in
+		lastday)
+			if [ `date +%-d` -eq 1 ]
+			then
+				previous_month
+			fi
+		;;
+		lastmonth)
+			previous_month
+		;;
+		fullyear)
+			compute_year
+		;;
+	esac
 fi
 
 if [ ! -d /var/www/vhosts/$1 ]
@@ -80,22 +97,31 @@ then
 	exit 1
 fi
 
-if [ ! -d /var/www/vhosts/$1/$staticpage/$year-$month ]
-then
-	mkdir /var/www/vhosts/$1/$staticpage/$year-$month 
-fi
+for mon in $month
+do
 
-$awstatsdir/awstats_buildstaticpages.pl -config=$1											\
-										-update												\
-										-dir=/var/www/vhosts/$1/$staticpage/$year-$month	\
-										-month=$month										\
-										-year=$year											\
-										-awstatsprog=$awstatsdir/awstats.pl					\
-										-lang=fr
+	if [ $mon -lt 10 ]
+	then
+		mon=0$mon
+	fi
 
-if [ ! -d /var/www/vhosts/$1/$staticpage/$year-$month/icon ]
-then
-	ln -s /usr/share/awstats/icon/ /var/www/vhosts/$1/$staticpage/$year-$month/icon
-fi
+	if [ ! -d /var/www/vhosts/$1/$staticpage/$year-$mon ]
+	then
+		mkdir /var/www/vhosts/$1/$staticpage/$year-$mon 
+	fi
+
+	$awstatsdir/awstats_buildstaticpages.pl -config=$1										\
+											-update											\
+											-dir=/var/www/vhosts/$1/$staticpage/$year-$mon	\
+											-month=$mon										\
+											-year=$year										\
+											-awstatsprog=$awstatsdir/awstats.pl				\
+											-lang=fr
+
+	if [ ! -d /var/www/vhosts/$1/$staticpage/$year-$mon/icon ]
+	then
+		ln -s /usr/share/awstats/icon/ /var/www/vhosts/$1/$staticpage/$year-$mon/icon
+	fi
+done
 
 exit 0

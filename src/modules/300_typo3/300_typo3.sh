@@ -125,8 +125,6 @@ whiptail --title "GoTYPO3 : TYPO3"                        \
          --radiolist "Select TYPO3 version to install :" \
          --noitem                                        \
          10 40 2                                         \
-         "4.3.5" 0                                       \
-         "4.4.2" 0                                       \
          "4.5.9" 0                                       \
          2>$tempfile
 typo3_version=$(<$tempfile)
@@ -171,7 +169,7 @@ do
     i=$((i+1))
 done
 
-HEIGHT=$((counter + 7))
+HEIGHT=$((vhosts_count + 7))
 TERM_HEIGHT=25
 if [[ $HEIGHT -gt $TERM_HEIGHT ]]
 then
@@ -244,11 +242,11 @@ do
             -e "s/\${typo3_key}/$typo3_key/g"       \
             $vhost_dir/httpdocs/typo3conf/localconf.php
 	cp $vhost_dir/httpdocs/typo3conf/localconf.php $vhost_dir/httpdocs/typo3conf/localconf_install.php
-    
+
     # update permissions
     chown -R $vhost_user:www-data *
-    find $vhost_dir/httpdocs -type d -exec chmod 6775 {} \;
-    find $vhost_dir/httpdocs -type f -exec chmod 0664 {} \;
+    find $vhost_dir/httpdocs -type d -exec chmod 6775 \{\} \;
+    find $vhost_dir/httpdocs -type f -exec chmod 0664 \{\} \;
     
     # configure a temporary host record and enable TYPO3 install tool
     echo "127.0.0.100 $i" >> /etc/hosts
@@ -324,7 +322,8 @@ do
     # update install tool password
     sed -i -e "s/bacb98acf97e0b6112b1d1b650b84971/$typo3_installtoolpwd_md5/g" \
         $vhost_dir/httpdocs/typo3conf/localconf.php
-
+	cp $vhost_dir/httpdocs/typo3conf/localconf.php $vhost_dir/httpdocs/typo3conf/localconf_install.php
+ 
     # delete temporary host record and disable install tool
     rm $vhost_dir/httpdocs/typo3conf/ENABLE_INSTALL_TOOL
     sed -i -e "/127.0.0.100 $i/d" /etc/hosts
@@ -336,6 +335,7 @@ do
     echo "TYPO3 admin : $vhost_user" >> /opt/ics/gotypo/report_$i
     echo "TYPO3 admin password : $typo3_adminpwd" >> /opt/ics/gotypo/report_$i
     echo "TYPO3 install tool password : $typo3_installtoolpwd" >> /opt/ics/gotypo/report_$i
+    echo "TYPO3 key : $typo3_key" >> /opt/ics/gotypo/report_$i
 done
 
 trap - INT TERM EXIT

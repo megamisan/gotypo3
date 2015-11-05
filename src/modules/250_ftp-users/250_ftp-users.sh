@@ -51,6 +51,7 @@ width_max=33
 tempfile="/tmp/gotypo_ftp-users_tmp"
 line_num=
 OLDIFS=""
+HOSTNAME=$(hostname -s)
 
 #===============================================================================
 # main script
@@ -138,7 +139,7 @@ do
                         $sys_user_gid,
                         '$ftp_user_home',
                         1 );"
-    echo $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf ftpserver
+    echo $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf ftpserver_${HOSTNAME}
 
     whiptail --title "GoTYPO3 : FTP users"     \
              --yesno "Add another FTP user ?" \

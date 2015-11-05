@@ -67,17 +67,17 @@ configure_proftpd ()
 {
     local proftpd_dbpwd=`</dev/urandom tr -dc a-zA-Z0-9 | head -c 8`
 
-    local sql_query="DROP DATABASE IF EXISTS \`ftpserver\`;"
+	local HOSTNAME=$(hostname -s)
+	
+    local sql_query="DROP DATABASE IF EXISTS \`ftpserver_${HOSTNAME}\`;"
     echo -e $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf
 
-    local sql_query="DROP USER 'proftpd'@'localhost';"
+    local sql_query="DROP USER 'proftpd'@'${HOSTNAME}';"
     echo $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf -f
     
-    local sql_query="CREATE DATABASE \`ftpserver\`;
-                     CREATE USER 'proftpd'@'localhost' IDENTIFIED BY '$proftpd_dbpwd';
-                     GRANT SELECT ON \`ftpserver\`.\0052 TO 'proftpd'@'localhost';
-                     ALTER DATABASE \`ftpserver\` DEFAULT CHARACTER SET utf8;
-                     ALTER DATABASE \`ftpserver\` DEFAULT COLLATE utf8_bin;"
+    local sql_query="CREATE DATABASE \`ftpserver_${HOSTNAME}\` COLLATE utf8_bin;
+                     CREATE USER 'proftpd'@'${HOSTNAME}' IDENTIFIED BY '$proftpd_dbpwd';
+                     GRANT SELECT ON \`ftpserver_${HOSTNAME}\`.\0052 TO 'proftpd'@'${HOSTNAME}';"
     echo -e $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf
 
     local sql_query="UPDATE user SET Create_view_priv = 'Y',
@@ -89,14 +89,13 @@ configure_proftpd ()
                      FLUSH PRIVILEGES;"
     echo $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf 'mysql'
 
-
     download_file "$GOTYPO3_IFAUTH"                         \
                   "$GOTYPO3_SRV/modules/proftpd_schema.sql" \
                   "/tmp/proftpd_schema.sql"                \
                   "$GOTYPO3_AUTHUSR"                        \
                   "$GOTYPO3_AUTHPWD"
     mysql --defaults-file=/etc/mysql/debian.cnf \
-          ftpserver                             \
+          ftpserver_${HOSTNAME}                             \
           < /tmp/proftpd_schema.sql
     rm /tmp/proftpd_schema.sql
     
@@ -145,6 +144,7 @@ configure_proftpd ()
 
     chmod 640 /etc/proftpd/sql.conf
     sed -i -e "s/\${proftpd_dbpwd}/$proftpd_dbpwd/g" \
+		-e "s/\${proftpd_db}/ftpserver_${HOSTNAME}@mysql/g" \
         /etc/proftpd/sql.conf
 
     /etc/init.d/proftpd restart
@@ -168,7 +168,7 @@ configure_awstats ()
        /usr/lib/cgi-bin/awstats_buildstaticpages.pl
 	fi
 
-    # download daily stats update script
+    # download daily and monthly stats update script
     download_file "$GOTYPO3_IFAUTH"                         \
                   "$GOTYPO3_SRV/modules/awstats_daily.cron" \
                   "/etc/cron.daily/awstats"                 \
@@ -176,6 +176,14 @@ configure_awstats ()
                   "$GOTYPO3_AUTHPWD"
 
     chmod 755 /etc/cron.daily/awstats
+
+    download_file "$GOTYPO3_IFAUTH"                         \
+                  "$GOTYPO3_SRV/modules/awstats_monthly.cron" \
+                  "/etc/cron.monthly/awstats"                 \
+                  "$GOTYPO3_AUTHUSR"                        \
+                  "$GOTYPO3_AUTHPWD"
+
+    chmod 755 /etc/cron.monthly/awstats
 
     download_file "$GOTYPO3_IFAUTH"                        \
                   "$GOTYPO3_SRV/modules/awstats_update.sh" \
@@ -213,10 +221,7 @@ pkgs_list="apache2
            libapache2-mod-php5
            locales-all
            makepasswd
-           mysql-admin
            mysql-client
-           mysql-query-browser
-           mysql-server
            ntp
            php5-cli
            php5-curl

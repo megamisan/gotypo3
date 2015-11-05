@@ -99,8 +99,8 @@ do
     if [[ ${#vhosts[$i]} -gt $maxwidth ]]
     then
         maxwidth=${#vhosts[$i]}
-    fi
-    ((i++))
+    fi 
+    i=$((i + 1))
 done
 
 height=$((vhosts_count + 7))
@@ -121,7 +121,7 @@ do
     awstats_user=`grep "System user" /opt/ics/gotypo/report_$i | \
                   cut -d ':' -f 2`
     awstats_password=`</dev/urandom tr -dc a-zA-Z0-9 | head -c 8`
-    awstats_aliases=`grep ServerAlias /var/www/vhosts/$1/conf/host.conf | \
+    awstats_aliases=`grep ServerAlias /var/www/vhosts/$i/conf/host.conf | \
                      cut -d ' ' -f 2                                    | \
                      tr  '\n' ' '`
 
