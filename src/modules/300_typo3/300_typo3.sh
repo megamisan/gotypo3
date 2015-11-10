@@ -201,17 +201,21 @@ do
     typo3_installtoolpwd=`</dev/urandom tr -dc a-zA-Z0-9 | head -c 8`
     typo3_installtoolpwd_md5=`echo -n $typo3_installtoolpwd | openssl dgst -md5`
     sql_query="CREATE DATABASE \`$typo3_db\` COLLATE utf8_unicode_ci;
-               CREATE USER '$typo3_dbusr'@'localhost' IDENTIFIED BY '$typo3_dbpwd';
-               GRANT ALL PRIVILEGES ON \`$typo3_db\`.\0052 TO '$typo3_dbusr'@'localhost';"
+               CREATE USER '$typo3_dbusr'@'$(hostname -s)' IDENTIFIED BY '$typo3_dbpwd';
+               GRANT ALL PRIVILEGES ON \`$typo3_db\`.\0052 TO '$typo3_dbusr'@'$(hostname -s)';"
 
     # create the database
     echo -e $sql_query | mysql --defaults-file=/etc/mysql/debian.cnf
-    
+
     cd $vhost_dir/httpdocs
     ln -s /var/local/typo3/$typo3_symlink $vhost_dir/httpdocs/typo3_src
+    ln -s typo3_src/index.php $vhost_dir/httpdocs/index.php
+    ln -s typo3_src/typo3 $vhost_dir/httpdocs/typo3
+    cp $vhost_dir/httpdocs/typo3_src/_.htaccess $vhost_dir/httpdocs/.htaccess
+    touch $vhost_dir/httpdocs/FIRST_INSTALL
 
     # update permissions
-    chown -R $vhost_user:www-data *
+    chown -R $vhost_user:www-data $vhost_dir/httpdocs
     find $vhost_dir/httpdocs -type d -exec chmod 6775 \{\} \;
     find $vhost_dir/httpdocs -type f -exec chmod 0664 \{\} \;
 

@@ -161,8 +161,13 @@ do
                -e "s/\${aliases}/$aliases/g"           \
             /var/www/vhosts/$vhost_fqdn/conf/host.conf
     fi
-    ln -s /var/www/vhosts/$vhost_fqdn/conf/host.conf \
+    if [ $(cut -d . -f 1 /etc/debian_version) -ge 8 ]; then
+        ln -s /var/www/vhosts/$vhost_fqdn/conf/host.conf \
+          /etc/apache2/sites-available/$vhost_fqdn.conf
+    else
+        ln -s /var/www/vhosts/$vhost_fqdn/conf/host.conf \
           /etc/apache2/sites-available/$vhost_fqdn
+    fi
 
     # add system user and set permissions
     adduser --quiet                            \
@@ -177,8 +182,8 @@ do
     chown -R $vhost_usr:www-data /var/www/vhosts/$vhost_fqdn/httpdocs
     chown -R $vhost_usr:www-data /var/www/vhosts/$vhost_fqdn/errors
     chown -R $vhost_usr:www-data /var/www/vhosts/$vhost_fqdn/srcclient
-    find /var/www/vhosts/$vhost_fqdn -type d -exec chmod 6775 \{}\ \;
-    find /var/www/vhosts/$vhost_fqdn -type f -exec chmod 0664 \{}\ \;
+    find /var/www/vhosts/$vhost_fqdn -type d -exec chmod 6775 '{}' \;
+    find /var/www/vhosts/$vhost_fqdn -type f -exec chmod 0664 '{}' \;
 
     # create a report and fill it
     touch /opt/ics/gotypo/report_$vhost_fqdn
