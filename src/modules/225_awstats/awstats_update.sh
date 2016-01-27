@@ -60,7 +60,7 @@ previous_month()
 compute_year()
 {
 	local lastmonth=$((month - 1))
-	if [ $month -eq 0 ]
+	if [ $lastmonth -eq 0 ]
 	then
 		lastmonth=12
 		year=$((year - 1))
